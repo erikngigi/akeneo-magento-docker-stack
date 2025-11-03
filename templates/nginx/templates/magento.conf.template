@@ -1,0 +1,41 @@
+upstream fastcgi_backend {
+    server ${MAGENTO_PHP_FPM_PORT};
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${MAGENTO_DOMAIN};
+
+    # Set Magento root directory
+    set $MAGE_ROOT ${MAGENTO_DIRECTORY};
+    include ${MAGENTO_DIRECTORY}/nginx.conf.sample;
+
+    access_log /var/log/nginx/magento.access.log;
+    error_log  /var/log/nginx/magento.error.log;
+
+    # Increase upload limits
+    client_max_body_size 25m;
+
+    # Pass PHP requests to PHP-FPM
+    location ~ \.php$ {
+        try_files $uri =404;
+        include fastcgi_params;
+        fastcgi_pass fastcgi_backend;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param MAGE_RUN_TYPE store;
+        fastcgi_param MAGE_RUN_CODE default;
+    }
+
+    # Static file caching
+    location ~* \.(jpg|jpeg|gif|png|css|js|ico|webp|tiff|woff|woff2|ttf|svg|eot)$ {
+        expires max;
+        log_not_found off;
+    }
+
+    # Deny access to sensitive files
+    location ~* (\.htaccess|\.git|\.env|composer\.json|composer\.lock|package\.json|gruntfile\.js|gulpfile\.js|webpack\.js|nginx\.conf|README) {
+        deny all;
+    }
+}

@@ -6,56 +6,85 @@ services:
     hostname: nginx-webserver
     restart: unless-stopped
     tty: true
+    environment:
+      AKENEO_PHP_FPM_PORT: ${AKENEO_PHP_FPM_PORT}
+      AKENEO_DOMAIN: ${AKENEO_DOMAIN}
+      AKENEO_DIRECTORY: ${AKENEO_DIRECTORY}
+      MAGENTO_PHP_FPM_PORT: ${MAGENTO_PHP_FPM_PORT}
+      MAGENTO_DOMAIN: ${MAGENTO_DOMAIN}
+      MAGENTO_DIRECTORY: ${MAGENTO_DIRECTORY}
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - ./src/magento:/var/www/html:cached
-      - ./templates/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./src/magento/magento2:/var/www/html/magento2:cached
+      - ./src/akeneo:/var/www/html:cached
+      - ./templates/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./templates/nginx/templates/:/etc/nginx/templates
     networks:
-      - magento-app-network
+      - akeneo-magento-app-network
+    depends_on:
+      - magento-php-fpm
+      - akeneo-php-fpm
     logging:
       options:
         max-size: "10M"
         max-file: "3"
-  php-fpm:
-    image: ghcr.io/erikngigi/magento-php8.3-fpm:latest
+  # Magento
+  magento-php-fpm:
+    image: ghcr.io/erikngigi/magento-php-fpm:8.3
     hostname: magento-php-fpm
     container_name: magento-php-fpm
     restart: unless-stopped
     tty: true
-    environment:
-      SERVICE_NAME: magento
-      SERVICE_TAGS: development
     volumes:
       - ./src/magento:/var/www/html:cached
-      # - ./templates/php-config/php.ini-development:/usr/local/etc/php/php.ini:ro
-    expose:
+      - ./templates/php/php/magento/php.ini-development:/usr/local/etc/php/php.ini:ro
+      - ./templates/php/php-fpm.d/magento/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ./templates/php/php-fpm.d/magento/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+    ports:
+      - "9050:9050"
+    networks:
+      - akeneo-magento-app-network
+  # Akeneo
+  akeneo-php-fpm:
+    image: ghcr.io/erikngigi/akeneo-php-fpm:8.1
+    hostname: akeneo-php-fpm
+    container_name: akeneo-php-fpm
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./src/akeneo:/var/www/html:cached
+      - ./templates/php/php/akeneo/php.ini-development:/usr/local/etc/php/php.ini:ro
+      - ./templates/php/php-fpm.d/akeneo/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ./templates/php/php-fpm.d/akeneo/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+    ports:
       - "9000:9000"
     networks:
-      - magento-app-network
-    depends_on:
-      - db
-  db:
+      - akeneo-magento-app-network
+  # MySQL
+  mysql-db:
     image: mysql:8.0
     hostname: mysql-database
     container_name: mysql-database
     restart: unless-stopped
     tty: true
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_HOST: ${MYSQL_HOST}
-      SERVICE_TAGS: development
-      SERVICE_NAME: mysql
     networks:
-      - magento-app-network
+      - akeneo-magento-app-network
     volumes:
       - db-data:/var/lib/mysql/
-      - ./templates/db-init:/docker-entrypoint-initdb.d
+      - ./templates/mysql:/docker-entrypoint-initdb.d
+    depends_on:
+      - akeneo-php-fpm
+      - magento-php-fpm
+  # Elastisearch
   elasticsearch:
     image: elasticsearch:7.17.27
+    hostname: elasticsearch
     container_name: elasticsearch
     ports:
       - "9200:9200"
@@ -64,7 +93,11 @@ services:
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     networks:
-      - magento-app-network
+      - akeneo-magento-app-network
+    depends_on:
+      - akeneo-php-fpm
+      - magento-php-fpm
+  # Redis
   redis:
     image: redis:7.4-alpine
     container_name: redis
@@ -77,12 +110,15 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
-      - magento-app-network
+      - akeneo-magento-app-network
     volumes:
       - redis-data:/data
+    depends_on:
+      - akeneo-php-fpm
+      - magento-php-fpm
 networks:
-  magento-app-network:
-    name: magento-app-network
+  akeneo-magento-app-network:
+    name: akeneo-magento-app-network
     driver: bridge
 volumes:
   db-data:

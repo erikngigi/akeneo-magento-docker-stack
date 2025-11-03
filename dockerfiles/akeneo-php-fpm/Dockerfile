@@ -29,6 +29,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install Node.js (LTS) and Yarn
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get update && apt-get install -y nodejs && \
+    npm install -g yarn && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Verify installations
+RUN node -v && npm -v && yarn -v
+
 # Install and enable third-party PHP extensions via PECL
 RUN pecl install imagick apcu && \
     docker-php-ext-enable imagick apcu
