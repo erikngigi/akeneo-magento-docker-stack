@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev \
     libicu-dev \
     libmagickwand-dev \
+    libcurl4-openssl-dev \
     git \
     unzip \
     curl \
