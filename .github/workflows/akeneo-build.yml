@@ -1,10 +1,10 @@
-name: Build and push Nginx Docker image for Magento 2.4.7.
+name: Build and push PHP-FPM Docker image for Akeneo 7 to GHCR.
 on:
   push:
     branches: ["main"]
     paths:
-      - 'docker/nginx/**'
-      - '.github/workflows/build-nginx-magento.yml'
+      - 'dockerfiles/akeneo-php-fpm/**'
+      - '.github/workflows/akeneo-build.yml'
   workflow_dispatch:
     inputs:
       tags:
@@ -29,9 +29,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./docker/nginx
-          file: ./docker/nginx/Dockerfile
+          context: ./dockerfiles/akeneo-php-fpm
+          file: ./dockerfiles/akeneo-php-fpm/Dockerfile
           push: true
-          tags: ghcr.io/${{ vars.GHCR_USERNAME }}/magento-nginx-1.29:latest
+          tags: ghcr.io/${{ vars.GHCR_USERNAME }}/akeneo-php-fpm:8.1
       - name: Image build complete
-        run: echo "✅ Nginx Magento Docker image built and pushed successfully."
+        run: echo "✅ PHP-FPM Magento Docker image built and pushed successfully."

@@ -64,12 +64,16 @@ RUN groupadd -g 1000 magento && \
     mkdir -p /home/magento/.config && \
     chown -R magento:magento /var/www/html /home/magento
 
+# Set Composer home for Akeneo user
+ENV COMPOSER_HOME=/home/magento/.composer
+RUN mkdir -p $COMPOSER_HOME && chown -R magento:magento $COMPOSER_HOME
+
 # Switch to non-root user
 USER magento
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Expose port 9000 and start php-fpm
-EXPOSE 9000
+# Expose port 9050 and start php-fpm
+EXPOSE 9050
 CMD ["php-fpm"]
