@@ -15,11 +15,13 @@ services:
       MAGENTO_DIRECTORY: ${MAGENTO_DIRECTORY}
     ports:
       - "8080:80"
+      - "8443:443"
     volumes:
       - ./src/magento/magento2:/var/www/html/magento2:cached
-      - ./src/akeneo:/var/www/html:cached
+      - ./src/akeneo/akeneo7:/var/www/html/akeneo7:cached
       - ./templates/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./templates/nginx/templates/:/etc/nginx/templates
+      - ./templates/nginx/certs:/etc/nginx/certs:ro
     networks:
       - akeneo-magento-app-network
     depends_on:
