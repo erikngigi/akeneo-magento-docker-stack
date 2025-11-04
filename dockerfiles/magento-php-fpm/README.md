@@ -1,163 +1,100 @@
-# 🐘 PHP 8.3 FPM for Magento 2.4.7
+# Magento PHP-FPM Dockerfile
 
-A lightweight, production-ready **PHP-FPM 8.3 Docker image** optimized for running **Magento 2.4.7**.  
-It includes all required PHP extensions, Composer, and performance optimizations for reliable Magento deployments.
-
----
-
-## 📦 Image Overview
-
-**Base Image:** `php:8.3-fpm`  
-**Maintainer:** Eric Ngigi (<cloud@ericngigi.com>)  
-**Version:** `1.0`  
-**Description:** PHP-FPM using version 8.3 for Magento 2.4.7  
+This directory contains the **custom Dockerfile** for building a PHP-FPM **8.3** image optimized for **Magento 2.4.7**.  
+The image is designed to provide a lightweight, secure, and extensible PHP runtime for Magento deployments.
 
 ---
 
-## 🧰 Installed Components
+## 🧱 Base Image
 
-This image comes with all major system and PHP dependencies needed for Magento 2.4.7.
-
-### 🔧 System Packages
-- `build-essential`, `git`, `curl`, `vim`, `zip`, `unzip`, `bash`, `less`, `supervisor`, `gnupg2`, `mycli`
-- Image optimization tools: `jpegoptim`, `optipng`, `pngquant`, `gifsicle`
-- Libraries: `libpng-dev`, `libjpeg62-turbo-dev`, `libfreetype6-dev`, `libonig-dev`, `libzip-dev`, `libgd-dev`, `libxml2-dev`, `libxslt-dev`, `libssl-dev`, `libmagickwand-dev`
-
-### 🧩 PHP Extensions
-| Extension | Purpose |
-|------------|----------|
-| `bcmath` | Precision math used by Magento pricing |
-| `calendar` | Date functions |
-| `exif` | Image metadata |
-| `gd` | Image processing (JPEG/Freetype support) |
-| `gettext` | Internationalization |
-| `intl` | Locale/translation |
-| `mbstring` | Multibyte string handling |
-| `mysqli`, `pdo_mysql` | MySQL database drivers |
-| `opcache` | PHP performance cache |
-| `pcntl` | Process control |
-| `soap` | Magento SOAP APIs |
-| `sockets` | Communication support |
-| `xsl`, `xml` | XML and XSLT |
-| `zip` | Archive management |
-| `imagick` *(via PECL)* | Advanced image processing |
-| `apcu` *(via PECL)* | Opcode and object caching |
+- **FROM:** `php:8.3-fpm`  
+- **Maintainer:** Eric Ngigi `<cloud@ericngigi.com>`  
+- **Description:** PHP-FPM image for Magento 2.4.7  
+- **Version:** 1.0  
 
 ---
 
-## 🎼 Composer
+## ⚙️ Key Features
 
-Composer is installed globally:
-
-```bash
-composer --version
-````
-
-Accessible directly via `PATH`.
+- Built on **PHP 8.3-FPM** with full Magento 2.4.7 compatibility.  
+- Includes all required **PHP extensions** and system libraries.  
+- Preinstalled **Composer** for dependency management.  
+- Uses a non-root `magento` user for secure container execution.  
+- Exposes **port 9050** for PHP-FPM.  
+- Optimized for use in Docker Compose environments with Nginx and MySQL.
 
 ---
 
-## 👤 User Configuration
+## 🧩 Installed PHP Extensions
 
-The image runs under a non-root user:
-
-```bash
-user: magento (UID 1000)
-group: magento (GID 1000)
+**Core Extensions:**
 ```
 
-Working directory: `/var/www/html`
+bcmath, calendar, exif, gd, gettext, intl, mbstring,
+mysqli, opcache, pcntl, pdo_mysql, soap, sockets, xsl, xml, zip
+
+```
+
+**PECL Extensions:**
+```
+
+imagick, apcu
+
+````
 
 ---
 
-## ⚙️ Exposed Ports
+## 🧰 Installed Tools and Dependencies
 
-| Port     | Description          |
-| -------- | -------------------- |
-| **9100** | PHP-FPM service port |
+- **System packages:** git, vim, bash, unzip, curl, gnupg2, mycli  
+- **Composer:** Installed globally and available in `$PATH`  
+- **ImageMagick & APCu:** Installed via PECL and enabled for performance
+
+---
+
+## 👤 User and Permissions
+
+A dedicated non-root user is created for running Magento:
+
+```bash
+user: magento
+group: magento
+home: /home/magento
+````
+
+This setup ensures proper permission handling, especially when working with mounted volumes during development or deployment.
 
 ---
 
 ## 🚀 Usage
 
-### Pull from GitHub Container Registry
-
-```bash
-docker pull ghcr.io/erikngigi/magento-php-fpm:8.3
-```
-
-### Run the container
-
-```bash
-docker run -d \
-  --name magento-php-fpm \
-  -p 9100:9100 \
-  -v $(pwd):/var/www/html \
-  ghcr.io/erikngigi/magento-php-fpm:8.3
-```
-
-### Example Docker Compose
-
-```yaml
-version: "3.8"
-services:
-  php-fpm:
-    image: ghcr.io/erikngigi/magento-php-fpm:8.3
-    container_name: magento-php-fpm
-    ports:
-      - "9100:9100"
-    volumes:
-      - ./src:/var/www/html
-```
-
----
-
-## 🧱 Building Locally
-
-To build your own image from this Dockerfile:
+### 1. Build the Docker Image
 
 ```bash
 docker build -t magento-php-fpm:8.3 .
 ```
 
----
-
-## 🧩 Integration with Magento 2.4.7
-
-This image is designed to be used alongside:
-
-* **Nginx or Apache** container (e.g., `magento-nginx`)
-* **MySQL/MariaDB** for data
-* **Redis** for caching
-* **Elasticsearch/OpenSearch** for search
-
-Example setup:
-
-```
-nginx → php-fpm → mysql/redis
-```
-
----
-
-## 🧼 Maintenance and Cleanup
-
-The image automatically cleans up apt caches to reduce image size.
-You can verify installed extensions with:
+### 2. Run the Container
 
 ```bash
-php -m
+docker run -d --name magento-php -p 9050:9050 magento-php-fpm:8.3
+```
+
+### 3. Verify PHP-FPM
+
+```bash
+docker exec -it magento-php php -v
 ```
 
 ---
 
-## 🪪 License
+## 🧱 Directory Context
 
-This image and Dockerfile are distributed under the **MIT License**.
-Feel free to fork, modify, and use in your Magento setups.
+This Dockerfile is used as part of the larger application stack managed through `docker-compose.yml`.
+It defines the **Magento PHP-FPM service** and works alongside Nginx, MySQL, and other containers defined in the project.
 
 ---
 
-### 💡 Maintained by
-
-**Eric Ngigi**
-Cloud Engineer & Magento Dockerization Enthusiast
+**Author:** Eric Ngigi
+**Email:** [cloud@ericngigi.com](mailto:cloud@ericngigi.com)
+**Version:** 1.0
