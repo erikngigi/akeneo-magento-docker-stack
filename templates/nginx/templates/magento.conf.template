@@ -1,62 +1,36 @@
+# Upstream blocks for backend services
 upstream fastcgi_backend {
-    server ${MAGENTO_PHP_FPM_PORT};
+ server  ${MAGENTO_PHP_FPM_PORT};
 }
 
-# HTTP Server - Redirect to HTTPS
+# Server block for Magento
+
 server {
-    listen 80;
-    listen [::]:80;
-    server_name ${MAGENTO_DOMAIN};
-    
-    # Redirect all HTTP traffic to HTTPS
-    return 301 https://$server_name$request_uri;
+ listen 80;
+ server_name ${MAGENTO_DOMAIN};
+ return 301 https://$host$request_uri;
 }
 
-# HTTPS Server
 server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name ${MAGENTO_DOMAIN};
-    
-    # SSL Certificate Configuration
-    ssl_certificate /etc/nginx/certs/magento.local.crt;
-    ssl_certificate_key /etc/nginx/certs/magento.local.key;
-    
-    # SSL Security Settings
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-    
-    # Set Magento root directory
-    set $MAGE_ROOT ${MAGENTO_DIRECTORY};
-    include ${MAGENTO_DIRECTORY}/nginx.conf.sample;
-    
-    access_log /var/log/nginx/magento.access.log;
-    error_log  /var/log/nginx/magento.error.log;
-    
-    # Increase upload limits
-    client_max_body_size 25m;
-    
-    # Pass PHP requests to PHP-FPM
-    location ~ \.php$ {
-        try_files $uri =404;
-        include fastcgi_params;
-        fastcgi_pass fastcgi_backend;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param MAGE_RUN_TYPE store;
-        fastcgi_param MAGE_RUN_CODE default;
-        fastcgi_param HTTPS on;
-    }
-    
-    # Static file caching
-    location ~* \.(jpg|jpeg|gif|png|css|js|ico|webp|tiff|woff|woff2|ttf|svg|eot)$ {
-        expires max;
-        log_not_found off;
-    }
-    
-    # Deny access to sensitive files
-    location ~* (\.htaccess|\.git|\.env|composer\.json|composer\.lock|package\.json|gruntfile\.js|gulpfile\.js|webpack\.js|nginx\.conf|README) {
-        deny all;
-    }
+  listen 443 ssl;
+  http2 on;
+  server_name ${MAGENTO_DOMAIN};
+
+  set $MAGE_ROOT ${MAGENTO_DIRECTORY};
+  include ${MAGENTO_DIRECTORY}/nginx.conf.sample;
+  client_max_body_size 25m;
+
+  access_log /var/log/nginx/magento.access.log;
+  error_log  /var/log/nginx/magento.error.log;
+
+  # TLS configuration
+  ssl_certificate /etc/nginx/certs/${MAGENTO_DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/nginx/certs/${MAGENTO_DOMAIN}/key.pem;
+  ssl_trusted_certificate /etc/nginx/certs/${MAGENTO_DOMAIN}/chain.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+
+  ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384';
+  ssl_prefer_server_ciphers on;
+  ssl_session_cache shared:SSL:50m;
+  ssl_session_timeout 1d;
 }
