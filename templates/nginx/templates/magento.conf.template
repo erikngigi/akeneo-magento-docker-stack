@@ -24,9 +24,9 @@ server {
   error_log  /var/log/nginx/magento.error.log;
 
   # TLS configuration
-  ssl_certificate /etc/nginx/certs/${MAGENTO_DOMAIN}/fullchain.pem;
-  ssl_certificate_key /etc/nginx/certs/${MAGENTO_DOMAIN}/key.pem;
-  ssl_trusted_certificate /etc/nginx/certs/${MAGENTO_DOMAIN}/chain.pem;
+  ssl_certificate /etc/nginx/certs/live/${MAGENTO_DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/nginx/certs/live/${MAGENTO_DOMAIN}/key.pem;
+  ssl_trusted_certificate /etc/nginx/certs/live/${MAGENTO_DOMAIN}/chain.pem;
   ssl_protocols TLSv1.2 TLSv1.3;
 
   ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384';
