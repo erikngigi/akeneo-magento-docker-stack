@@ -80,6 +80,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql/
       - ./templates/mysql:/docker-entrypoint-initdb.d
+      - ./templates/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     depends_on:
       - akeneo-php-fpm
       - magento-php-fpm
