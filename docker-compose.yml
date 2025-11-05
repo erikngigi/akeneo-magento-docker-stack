@@ -14,8 +14,8 @@ services:
       MAGENTO_DOMAIN: ${MAGENTO_DOMAIN}
       MAGENTO_DIRECTORY: ${MAGENTO_DIRECTORY}
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./src/magento/magento2:/var/www/html/magento2:cached
       - ./src/akeneo/akeneo7:/var/www/html/akeneo7:cached
