@@ -134,10 +134,10 @@ create_symlinks() {
     rm -f "$domain_cert_dir/cert.pem"
     
     # Create symbolic links
-    ln -sf "$le_domain_dir/fullchain.pem" "$domain_cert_dir/fullchain.pem"
-    ln -sf "$le_domain_dir/privkey.pem" "$domain_cert_dir/privkey.pem"
-    ln -sf "$le_domain_dir/chain.pem" "$domain_cert_dir/chain.pem"
-    ln -sf "$le_domain_dir/cert.pem" "$domain_cert_dir/cert.pem"
+    cp -v "$le_domain_dir/fullchain.pem" "$domain_cert_dir/fullchain.pem"
+    cp -v "$le_domain_dir/privkey.pem" "$domain_cert_dir/privkey.pem"
+    cp -v "$le_domain_dir/chain.pem" "$domain_cert_dir/chain.pem"
+    cp -v "$le_domain_dir/cert.pem" "$domain_cert_dir/cert.pem"
     
     # Set permissions
     # 755 = Owner: rwx, Group: r-x, Others: r-x
