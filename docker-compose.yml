@@ -38,6 +38,10 @@ services:
     container_name: magento-php-fpm
     restart: unless-stopped
     tty: true
+    user: "1000:1000" # Run container as your host user
+    command: >
+      sh -c "chown -R magento:magento /var/www/html && php-fpm"
+
     volumes:
       - ./src/magento:/var/www/html:cached
       - ./templates/php/php/magento/php.ini-development:/usr/local/etc/php/php.ini:ro
@@ -54,6 +58,10 @@ services:
     container_name: akeneo-php-fpm
     restart: unless-stopped
     tty: true
+    user: "1000:1000" # Run container as your host user
+    command: >
+      sh -c "chown -R www-data:www-data /var/www/html && php-fpm"
+
     volumes:
       - ./src/akeneo:/var/www/html:cached
       - ./templates/php/php/akeneo/php.ini-development:/usr/local/etc/php/php.ini:ro
@@ -83,7 +91,7 @@ services:
     depends_on:
       - akeneo-php-fpm
       - magento-php-fpm
-  # Elastisearch
+  # Elasticsearch
   elasticsearch:
     image: elasticsearch:7.17.27
     hostname: elasticsearch
