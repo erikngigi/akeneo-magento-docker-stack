@@ -24,7 +24,7 @@ server {
 
   # TLS configuration
   ssl_certificate /etc/nginx/certs/live/${AKENEO_DOMAIN}/fullchain.pem;
-  ssl_certificate_key /etc/nginx/certs/live/${AKENEO_DOMAIN}/key.pem;
+  ssl_certificate_key /etc/nginx/certs/live/${AKENEO_DOMAIN}/privkey.pem;
   ssl_trusted_certificate /etc/nginx/certs/live/${AKENEO_DOMAIN}/chain.pem;
   ssl_protocols TLSv1.2 TLSv1.3;
 
