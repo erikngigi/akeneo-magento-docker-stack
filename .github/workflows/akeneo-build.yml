@@ -1,7 +1,7 @@
 name: Build and push PHP-FPM Docker image for Akeneo 7 to GHCR.
 on:
   push:
-    branches: ["main"]
+    branches: ["dev"]
     paths:
       - 'dockerfiles/akeneo-php-fpm/**'
       - '.github/workflows/akeneo-build.yml'
