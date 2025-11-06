@@ -65,6 +65,8 @@ RUN sed -i 's/^listen = 9000$/listen = 9050/' /usr/local/etc/php-fpm.d/zz-docker
 # Create application user
 RUN groupadd -g 1000 magento && \
     useradd -u 1000 -ms /bin/bash -g magento magento && \
+     echo "magento ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/magento && \
+    chmod 0440 /etc/sudoers.d/magento && \
     mkdir -p /home/magento/.config && \
     mkdir -p /home/magento/magento2 && \
     chown -R magento:magento /home/magento
