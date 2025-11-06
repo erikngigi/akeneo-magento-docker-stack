@@ -56,7 +56,21 @@ bin/magento setup:install \
 --use-rewrites=1 \
 --elasticsearch-host=$ELASTICSEARCH_HOST \
 --elasticsearch-port=$ELASTICSEARCH_PORT \
+--session-save=$REDIS_HOST \
+--session-save-redis-db=0 \
+--session-save-redis-password=$REDIS_PASSWORD \
+--cache-backend=$REDIS_HOST \
+--cache-backend-redis-db=2 \
+--cache-backend-redis-password=$REDIS_PASSWORD \
+--page-cache=$REDIS_HOST \
+--page-cache-redis-db=4 \
+--page-cache-redis-password=$REDIS_PASSWORD
 "
+
+# Reindex files
+print_green "Reindexing Magento files"
+magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento setup:static-content:deploy -f"
+magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento indexer:reindex"
 
 # Disable Two factor authentication
 print_green "Disabling Two factor authenication"
@@ -64,55 +78,8 @@ magento_exec bash -c "
 cd $MAGENTO_INST_DIR &&
 php bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth;
 php bin/magento module:disable Magento_TwoFactorAuth;
-php bin/magento cache:flush;
 "
-
-# Reindex files
-print_green "Reindexing Magento files"
-magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento indexer:reindex"
-
-# Switch to developer mode
-print_green "Deploying Magento in developer mode."
-magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento deploy:mode:set developer;"
-
-# Clear previously generated classes and proxies
-magento_exec bash -c "cd $MAGENTO_INST_DIR && rm -rf generated/code/* generated/metadata/*;"
-
-# Deploy sample data modules
-print_green "Deploying Magento sample data."
-magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento sampledata:deploy;"
-
-# Upgrades the Magento application, DB data, and schema
-print_green "Upgrade magento files"
-magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento setup:upgrade;"
-
 # Recompile files
 print_green "Recompile Magento files"
 magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento setup:di:compile"
-
-# Deploy static view files
-print_green "Deploy static files for Magento."
-magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento setup:static-content:deploy -f"
-
-# Clean and flush cache
-print_green "Clear cache"
-magento_exec bash -c "
-cd $MAGENTO_INST_DIR &&
-php bin/magento cache:clean;
-php bin/magento cache:flush;
-"
-
-# Set permissions to the files
-print_green "Update directory and file permissions."
-magento_exec bash -c "
-cd $MAGENTO_INST_DIR &&
-find . -type f -exec chmod 644 {} \;
-find . -type d -exec chmod 755 {} \;
-"
-
-# Change Admin URL
-print_green "Changing the Magento 2 Admin URL"
-magento_exec bash -c "
-cd $MAGENTO_INST_DIR &&
-php bin/magento info:adminuri;
-"
+magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento cache:clean"
