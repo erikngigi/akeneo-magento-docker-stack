@@ -16,7 +16,7 @@ akeneo_exec() {
 
 # Helper to execute commands inside the Akeneo installation directory
 akeneo_exec_in_akeneo_dir() {
-	docker exec -it "$1" bash -c "cd $AKENEO_INST_DIR && ${*:2}"
+	docker exec -it akeneo-php-fpm bash -c "cd $AKENEO_INST_DIR && ${*:2}"
 }
 
 # Download Akeneo installation files using composer
