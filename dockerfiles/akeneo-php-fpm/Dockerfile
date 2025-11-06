@@ -8,6 +8,7 @@ LABEL Version="1.0"
 
 # Install required system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    sudo \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
@@ -69,11 +70,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Add Composer to the PATH
 ENV PATH="/usr/local/bin:$PATH"
 
-# Create application user
+# Create application user and give sudo access
 RUN groupadd -g 1000 akeneo && \
     useradd -u 1000 -ms /bin/bash -g akeneo akeneo && \
+    echo "akeneo ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/akeneo && \
+    chmod 0440 /etc/sudoers.d/akeneo && \
     mkdir -p /home/akeneo/.config && \
-    chown -R akeneo:akeneo /var/www/html /home/akeneo
+    mkdir -p /home/akeneo/akeneo7 && \
+    chown -R akeneo:akeneo /home/akeneo
 
 # Set Composer home for Akeneo user
 ENV COMPOSER_HOME=/home/akeneo/.composer
@@ -83,7 +87,7 @@ RUN mkdir -p $COMPOSER_HOME && chown -R akeneo:akeneo $COMPOSER_HOME
 USER akeneo
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /home/akeneo
 
 # Expose port 9000 and start php-fpm
 EXPOSE 9000

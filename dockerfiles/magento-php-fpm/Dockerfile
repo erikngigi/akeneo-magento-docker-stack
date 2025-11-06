@@ -8,6 +8,7 @@ LABEL Version="1.0"
 
 # Install required system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    sudo \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
@@ -58,13 +59,17 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Add Composer to the PATH
 ENV PATH="/usr/local/bin:$PATH"
 
+# Configure PHP-FPM port
+RUN sed -i 's/^listen = 9000$/listen = 9050/' /usr/local/etc/php-fpm.d/zz-docker.conf
+
 # Create application user
 RUN groupadd -g 1000 magento && \
     useradd -u 1000 -ms /bin/bash -g magento magento && \
     mkdir -p /home/magento/.config && \
-    chown -R magento:magento /var/www/html /home/magento
+    mkdir -p /home/magento/magento2 && \
+    chown -R magento:magento /home/magento
 
-# Set Composer home for Akeneo user
+# Set Composer home for magento user
 ENV COMPOSER_HOME=/home/magento/.composer
 RUN mkdir -p $COMPOSER_HOME && chown -R magento:magento $COMPOSER_HOME
 
@@ -72,7 +77,7 @@ RUN mkdir -p $COMPOSER_HOME && chown -R magento:magento $COMPOSER_HOME
 USER magento
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /home/magento
 
 # Expose port 9050 and start php-fpm
 EXPOSE 9050
