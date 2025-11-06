@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     tty: true
     volumes:
-      - ./src/magento:/var/www/html:cached
+      - ./src/magento:/home/magento/magento2:cached
       - ./templates/php/php/magento/php.ini-development:/usr/local/etc/php/php.ini:ro
       - ./templates/php/php-fpm.d/magento/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     ports:
@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
     tty: true
     volumes:
-      - ./src/akeneo:/var/www/html:cached
+      - ./src/akeneo:/home/akeneo/akeneo7:cached
       - ./templates/php/php/akeneo/php.ini-development:/usr/local/etc/php/php.ini:ro
       - ./templates/php/php-fpm.d/akeneo/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     ports:
