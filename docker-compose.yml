@@ -1,4 +1,36 @@
 services:
+  # Nginx
+  nginx-webserver:
+    image: nginx:1.29.3-alpine
+    container_name: nginx-webserver
+    hostname: nginx-webserver
+    restart: unless-stopped
+    tty: true
+    environment:
+      AKENEO_PHP_FPM_PORT: ${AKENEO_PHP_FPM_PORT}
+      AKENEO_DOMAIN: ${AKENEO_DOMAIN}
+      AKENEO_DIRECTORY: ${AKENEO_DIRECTORY}
+      MAGENTO_PHP_FPM_PORT: ${MAGENTO_PHP_FPM_PORT}
+      MAGENTO_DOMAIN: ${MAGENTO_DOMAIN}
+      MAGENTO_DIRECTORY: ${MAGENTO_DIRECTORY}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./src/magento:/home/magento/magento2:cached
+      - ./src/akeneo:/home/akeneo/akeneo7:cached
+      - ./templates/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./templates/nginx/templates/:/etc/nginx/templates
+      - ./templates/nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - akeneo-magento-app-network
+    depends_on:
+      - magento-php-fpm
+      - akeneo-php-fpm
+    logging:
+      options:
+        max-size: "10M"
+        max-file: "3"
   # Magento
   magento-php-fpm:
     image: ghcr.io/erikngigi/magento-php-fpm:8.3
@@ -10,8 +42,9 @@ services:
       - ./src/magento:/home/magento/magento2:cached
       - ./templates/php/php/magento/php.ini-development:/usr/local/etc/php/php.ini:ro
       - ./templates/php/php-fpm.d/magento/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-    ports:
-      - "127.0.0.1:9050:9050"
+      - ./templates/php/php-fpm.d/magento/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+    expose:
+      - "9050"
     networks:
       - akeneo-magento-app-network
   # Akeneo
@@ -25,8 +58,9 @@ services:
       - ./src/akeneo:/home/akeneo/akeneo7:cached
       - ./templates/php/php/akeneo/php.ini-development:/usr/local/etc/php/php.ini:ro
       - ./templates/php/php-fpm.d/akeneo/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-    ports:
-      - "127.0.0.1:9000:9000"
+      - ./templates/php/php-fpm.d/akeneo/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+    expose:
+      - "9000"
     networks:
       - akeneo-magento-app-network
   # MySQL
