@@ -7,10 +7,9 @@ services:
     restart: unless-stopped
     tty: true
     volumes:
-      - ./src/magento:/var/www/html:cached
       - ./templates/php/php/magento/php.ini-development:/usr/local/etc/php/php.ini:ro
       - ./templates/php/php-fpm.d/magento/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-      - ./templates/php/php-fpm.d/magento/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      - magento-data:/home/magento/magento2
     ports:
       - "127.0.0.1:9050:9050"
     networks:
@@ -23,10 +22,9 @@ services:
     restart: unless-stopped
     tty: true
     volumes:
-      - ./src/akeneo:/var/www/html:cached
       - ./templates/php/php/akeneo/php.ini-development:/usr/local/etc/php/php.ini:ro
       - ./templates/php/php-fpm.d/akeneo/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-      - ./templates/php/php-fpm.d/akeneo/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      - akeneo-data:/home/akeneo/akeneo7
     ports:
       - "127.0.0.1:9000:9000"
     networks:
