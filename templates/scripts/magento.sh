@@ -56,15 +56,6 @@ bin/magento setup:install \
 --use-rewrites=1 \
 --elasticsearch-host=$ELASTICSEARCH_HOST \
 --elasticsearch-port=$ELASTICSEARCH_PORT \
---session-save=$REDIS_HOST \
---session-save-redis-db=0 \
---session-save-redis-password=$REDIS_PASSWORD \
---cache-backend=$REDIS_HOST \
---cache-backend-redis-db=2 \
---cache-backend-redis-password=$REDIS_PASSWORD \
---page-cache=$REDIS_HOST \
---page-cache-redis-db=4 \
---page-cache-redis-password=$REDIS_PASSWORD
 "
 
 # Disable Two factor authentication
@@ -75,10 +66,6 @@ php bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth;
 php bin/magento module:disable Magento_TwoFactorAuth;
 php bin/magento cache:flush;
 "
-
-# Remove old files
-# print_green "Removing old magento system files"
-# magento_exec bash -c "rm -rf var/cache/* var/page_cache/* var/generation/*"
 
 # Reindex files
 print_green "Reindexing Magento files"
@@ -127,6 +114,5 @@ find . -type d -exec chmod 755 {} \;
 print_green "Changing the Magento 2 Admin URL"
 magento_exec bash -c "
 cd $MAGENTO_INST_DIR &&
-yes | php bin/magento setup:config:set --backend-frontname='admin';
 php bin/magento info:adminuri;
 "
