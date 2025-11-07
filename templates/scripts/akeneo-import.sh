@@ -17,5 +17,5 @@ magento_exec() {
 # Setup composer details for Magento repository
 magento_exec bash -c "
 cd $MAGENTO_INST_DIR && \
-php bin/magento akeneo_connector:import=attribute,option,family,category,product
+php bin/magento akeneo_connector:import --code=attribute,option,family,category,product
 "
