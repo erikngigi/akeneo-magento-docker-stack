@@ -1,10 +1,10 @@
 # Base image
-FROM php:8.5-fpm
+FROM php:8.3-fpm
 
 # Maintainer details
 LABEL Maintainer="Eric Ngigi <cloud@ericngigi.com>"
-LABEL Description="PHP-FPM using version 8.5 for Magento 2.4.9"
-LABEL Version="1.1"
+LABEL Description="PHP-FPM using version 8.3 for Magento 2.4.7"
+LABEL Version="1.0"
 
 # Install required system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
