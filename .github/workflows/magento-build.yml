@@ -1,4 +1,4 @@
-name: Build and push PHP-FPM Docker image for Magento 2.4.9 to GHCR.
+name: Build and push PHP-FPM Docker image for Magento 2.4.7 to GHCR.
 on:
     push:
         branches:
@@ -33,6 +33,6 @@ jobs:
                 context: ./dockerfiles/magento-php-fpm
                 file: ./dockerfiles/magento-php-fpm/Dockerfile
                 push: true
-                tags: ghcr.io/${{ vars.GHCR_USERNAME }}/magento-php-fpm:8.5
+                tags: ghcr.io/${{ github.repository_owner }}/magento-php-fpm:8.3
           - name: Image build complete
             run: echo "✅ PHP-FPM Magento Docker image built and pushed successfully."
