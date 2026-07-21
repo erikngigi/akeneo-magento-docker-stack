@@ -31,38 +31,38 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (LTS) and Yarn
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
-    apt-get update && apt-get install -y nodejs && \
-    npm install -g yarn && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get update && apt-get install -y nodejs \
+    && npm install -g yarn \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Verify installations
 RUN node -v && npm -v && yarn -v
 
 # Install and enable third-party PHP extensions via PECL
-RUN pecl install imagick apcu && \
-    docker-php-ext-enable imagick apcu
+RUN pecl install imagick apcu \
+    && docker-php-ext-enable imagick apcu
 
 # Configure and install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install \
-    bcmath \
-    calendar \
-    curl \
-    exif \
-    gd \
-    gettext \
-    intl \
-    mbstring \
-    mysqli \
-    opcache \
-    pcntl \
-    pdo_mysql \
-    soap \
-    sockets \
-    xsl \
-    xml \
-    zip
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        bcmath \
+        calendar \
+        curl \
+        exif \
+        gd \
+        gettext \
+        intl \
+        mbstring \
+        mysqli \
+        opcache \
+        pcntl \
+        pdo_mysql \
+        soap \
+        sockets \
+        xsl \
+        xml \
+        zip
 
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -71,13 +71,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ENV PATH="/usr/local/bin:$PATH"
 
 # Create application user and give sudo access
-RUN groupadd -g 1000 akeneo && \
-    useradd -u 1000 -ms /bin/bash -g akeneo akeneo && \
-    echo "akeneo ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/akeneo && \
-    chmod 0440 /etc/sudoers.d/akeneo && \
-    mkdir -p /home/akeneo/.config && \
-    mkdir -p /home/akeneo/akeneo7 && \
-    chown -R akeneo:akeneo /home/akeneo
+RUN groupadd -g 1000 akeneo \
+    && useradd -u 1000 -ms /bin/bash -g akeneo akeneo \
+    && echo "akeneo ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/akeneo \
+    && chmod 0440 /etc/sudoers.d/akeneo \
+    && mkdir -p /home/akeneo/.config \
+    && mkdir -p /home/akeneo/akeneo7 \
+    && chown -R akeneo:akeneo /home/akeneo
 
 # Set Composer home for Akeneo user
 ENV COMPOSER_HOME=/home/akeneo/.composer

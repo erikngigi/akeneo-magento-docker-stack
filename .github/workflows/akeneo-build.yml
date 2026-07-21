@@ -1,37 +1,38 @@
 name: Build and push PHP-FPM Docker image for Akeneo 7 to GHCR.
 on:
-  push:
-    branches: ["dev"]
-    paths:
-      - 'dockerfiles/akeneo-php-fpm/**'
-      - '.github/workflows/akeneo-build.yml'
-  workflow_dispatch:
-    inputs:
-      tags:
-        description: 'Custom tag for the image (optional)'
-        required: false
-        default: 'latest'
+    push:
+        branches:
+          - 'development'
+        paths:
+          - 'dockerfiles/akeneo-php-fpm/**'
+          - '.github/workflows/akeneo-build.yml'
+    workflow_dispatch:
+        inputs:
+            tags:
+                description: 'Custom tag for the image (optional)'
+                required: false
+                default: 'latest'
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Login to Github Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: ./dockerfiles/akeneo-php-fpm
-          file: ./dockerfiles/akeneo-php-fpm/Dockerfile
-          push: true
-          tags: ghcr.io/${{ vars.GHCR_USERNAME }}/akeneo-php-fpm:8.1
-      - name: Image build complete
-        run: echo "✅ PHP-FPM Magento Docker image built and pushed successfully."
+    build:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+          - name: Check out repository
+            uses: actions/checkout@v4
+          - name: Login to Github Container Registry
+            uses: docker/login-action@v4
+            with:
+                registry: ghcr.io
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+          - name: Build and push
+            uses: docker/build-push-action@v7
+            with:
+                context: ./dockerfiles/akeneo-php-fpm
+                file: ./dockerfiles/akeneo-php-fpm/Dockerfile
+                push: true
+                tags: ghcr.io/${{ github.repository_owner }}/akeneo:8.1
+          - name: Image build complete
+            run: echo "✅ PHP-FPM Magento Docker image built and pushed successfully."
