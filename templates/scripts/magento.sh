@@ -11,7 +11,7 @@ source "$MAGENTO_SCRIPT_DIR/colors.sh"
 
 # Define a reusable function for the Docker container magento
 magento_exec() {
-	docker exec -it magento-php-fpm "$@"
+  docker exec -it magento "$@"
 }
 
 # Setup composer details for Magento repository
