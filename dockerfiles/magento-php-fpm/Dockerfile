@@ -82,5 +82,4 @@ USER magento
 WORKDIR /home/magento
 
 # Expose port 9050 and start php-fpm
-EXPOSE 9050
 CMD ["php-fpm"]

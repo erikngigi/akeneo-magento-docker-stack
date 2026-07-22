@@ -4,7 +4,7 @@ FROM php:8.1-fpm
 # Maintainer details
 LABEL Maintainer="Eric Ngigi <cloud@ericngigi.com>"
 LABEL Description="PHP-FPM using version 8.1 for Akeneo 7"
-LABEL Version="1.0"
+LABEL Version="1.1"
 
 # Install required system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -70,6 +70,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Add Composer to the PATH
 ENV PATH="/usr/local/bin:$PATH"
 
+# Configure PHP-FPM port
+RUN sed -i 's/^listen = 9000$/listen = 9000/' /usr/local/etc/php-fpm.d/zz-docker.conf
+
 # Create application user and give sudo access
 RUN groupadd -g 1000 akeneo \
     && useradd -u 1000 -ms /bin/bash -g akeneo akeneo \
@@ -90,5 +93,4 @@ USER akeneo
 WORKDIR /home/akeneo
 
 # Expose port 9000 and start php-fpm
-EXPOSE 9000
 CMD ["php-fpm"]
