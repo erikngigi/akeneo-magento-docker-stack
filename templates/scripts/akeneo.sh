@@ -18,11 +18,8 @@ akeneo_exec() {
 print_green "Downloading and extracting Akeneo PIM archive..."
 akeneo_exec bash -c "
   sudo chown -R $AKENEO_USER:$AKENEO_USER $AKENEO_INST_DIR && \
-  cd /tmp && \
-  wget -q https://download.akeneo.com/pim-community-standard-v7.0-latest-icecat.tar.gz && \
-  tar -xzf pim-community-standard-v7.0-latest-icecat.tar.gz && \
-  cp -r pim-community-standard-v7.0*/* $AKENEO_INST_DIR/ && \
-  rm -rf /tmp/pim-community-standard*
+  curl -sSL https://download.akeneo.com/pim-community-standard-v7.0-latest-icecat.tar.gz && \
+  tar -xzf pim-community-standard-v7.0-latest-icecat.tar.gz -C $AKENEO_INST_DIR --strip-components=1
 "
 
 # copy .env to .env.local
