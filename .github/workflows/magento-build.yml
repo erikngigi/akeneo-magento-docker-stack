@@ -4,7 +4,7 @@ on:
         branches:
           - development
         paths:
-          - 'dockerfiles/magento-php-fpm/**'
+          - 'dockerfiles/magento/**'
           - '.github/workflows/magento-build.yml'
     workflow_dispatch:
         inputs:

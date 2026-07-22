@@ -6,6 +6,10 @@ LABEL Maintainer="Eric Ngigi <cloud@ericngigi.com>"
 LABEL Description="PHP-FPM using version 8.1 for Akeneo 7"
 LABEL Version="1.1"
 
+# Define build arguments with fallbacks
+ARG USER_ID=1001
+ARG GROUP_ID=1001
+
 # Install required system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
@@ -71,8 +75,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ENV PATH="/usr/local/bin:$PATH"
 
 # Create application user and give sudo access
-RUN groupadd -g 1000 akeneo \
-    && useradd -u 1000 -ms /bin/bash -g akeneo akeneo \
+RUN groupadd -g ${GROUP_ID} akeneo \
+    && useradd -u ${USER_ID} -ms /bin/bash -g akeneo akeneo \
     && echo "akeneo ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/akeneo \
     && chmod 0440 /etc/sudoers.d/akeneo \
     && mkdir -p /home/akeneo/.config \

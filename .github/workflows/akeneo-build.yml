@@ -4,7 +4,7 @@ on:
         branches:
           - 'development'
         paths:
-          - 'dockerfiles/akeneo-php-fpm/**'
+          - 'dockerfiles/akeneo/**'
           - '.github/workflows/akeneo-build.yml'
     workflow_dispatch:
         inputs:
