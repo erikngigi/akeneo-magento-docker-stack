@@ -30,8 +30,8 @@ jobs:
           - name: Build and push
             uses: docker/build-push-action@v7
             with:
-                context: ./dockerfiles/akeneo-php-fpm
-                file: ./dockerfiles/akeneo-php-fpm/Dockerfile
+                context: ./dockerfiles/akeneo
+                file: ./dockerfiles/akeneo/Dockerfile
                 push: true
                 tags: ghcr.io/${{ github.repository_owner }}/${{ vars.AKENEO_IMAGE_NAME }}:latest
           - name: Image build complete

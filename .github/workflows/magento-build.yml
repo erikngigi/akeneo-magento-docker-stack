@@ -30,8 +30,8 @@ jobs:
           - name: Build and push
             uses: docker/build-push-action@v7
             with:
-                context: ./dockerfiles/magento-php-fpm
-                file: ./dockerfiles/magento-php-fpm/Dockerfile
+                context: ./dockerfiles/magento
+                file: ./dockerfiles/magento/Dockerfile
                 push: true
                 tags: ghcr.io/${{ github.repository_owner }}/${{ vars.MAGENTO_IMAGE_NAME }}:latest
           - name: Image build complete
