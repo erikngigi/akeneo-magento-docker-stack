@@ -70,9 +70,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Add Composer to the PATH
 ENV PATH="/usr/local/bin:$PATH"
 
-# Configure PHP-FPM port
-RUN sed -i 's/^listen = 9000$/listen = 9000/' /usr/local/etc/php-fpm.d/zz-docker.conf
-
 # Create application user and give sudo access
 RUN groupadd -g 1000 akeneo \
     && useradd -u 1000 -ms /bin/bash -g akeneo akeneo \
@@ -92,5 +89,5 @@ USER akeneo
 # Set working directory
 WORKDIR /home/akeneo
 
-# Expose port 9000 and start php-fpm
+# Start php-fpm
 CMD ["php-fpm"]

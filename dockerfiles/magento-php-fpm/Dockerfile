@@ -59,9 +59,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Add Composer to the PATH
 ENV PATH="/usr/local/bin:$PATH"
 
-# Configure PHP-FPM port
-RUN sed -i 's/^listen = 9000$/listen = 9050/' /usr/local/etc/php-fpm.d/zz-docker.conf
-
 # Create application user
 RUN groupadd -g 1000 magento \
     && useradd -u 1000 -ms /bin/bash -g magento magento \
@@ -81,5 +78,5 @@ USER magento
 # Set working directory
 WORKDIR /home/magento
 
-# Expose port 9050 and start php-fpm
+# Start php-fpm
 CMD ["php-fpm"]

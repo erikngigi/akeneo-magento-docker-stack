@@ -63,6 +63,8 @@ services:
           - "9050:9050"
         networks:
           - akeneo-magento-app-network
+        depends_on:
+          - "mysql-db"
     # MySQL
     mysql-db:
         image: mysql:lts
@@ -74,16 +76,12 @@ services:
           - "3307:3306"
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-            MYSQL_HOST: ${MYSQL_HOST}
         networks:
           - akeneo-magento-app-network
         volumes:
           - db-data:/var/lib/mysql/
           - ./templates/mysql:/docker-entrypoint-initdb.d
           - ./templates/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
-        depends_on:
-          - akeneo
-          - magento
     # Elastisearch
     elasticsearch:
         image: elasticsearch:7.17.27
