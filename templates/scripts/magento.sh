@@ -16,15 +16,15 @@ magento_exec() {
 
 # Setup composer details for Magento repository
 magento_exec bash -c "composer config --global http-basic.repo.magento.com $ADOBE_MAGENTO_USERNAME $ADOBE_MAGENTO_PASSWORD"
-print_green "Magento composer details added succesfully."
+print_green "Magento composer details added successfully."
 
-# Download the Magento community edition files
+# Download the Magento community edition files directly into $MAGENTO_INST_DIR
 magento_exec bash -c "composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition=$MAGENTO_VERSION $MAGENTO_INST_DIR"
-print_green "Magento version $MAGENTO_VERSION downloaded succesfully."
+print_green "Magento version $MAGENTO_VERSION downloaded successfully."
 
 # Set the file permissions and make Magento binary executable
 magento_exec bash -c "
-    cd $MAGENTO_INST_DIR/project-community-edition &&
+    cd $MAGENTO_INST_DIR &&
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +;
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+ws {} +;
     chmod +x bin/magento;
@@ -34,7 +34,7 @@ print_green "Update permissions of Magento directory"
 # Setup magento
 print_blue "Installing Magento version $MAGENTO_VERSION"
 magento_exec bash -c "
-cd $MAGENTO_INST_DIR/project-community-edition &&
+cd $MAGENTO_INST_DIR &&
 bin/magento setup:install \
 --base-url=$BASE_URL \
 --use-secure=1 \
@@ -71,18 +71,18 @@ bin/magento setup:install \
 
 # Reindex files
 print_green "Reindexing Magento files"
-magento_exec bash -c "cd $MAGENTO_INST_DIR/project-community-edition && php bin/magento setup:static-content:deploy -f"
-magento_exec bash -c "cd $MAGENTO_INST_DIR/project-community-edition && php bin/magento indexer:reindex"
+magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento setup:static-content:deploy -f"
+magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento indexer:reindex"
 
 # Disable Two factor authentication
-print_green "Disabling Two factor authenication"
+print_green "Disabling Two factor authentication"
 magento_exec bash -c "
-cd $MAGENTO_INST_DIR/project-community-edition &&
+cd $MAGENTO_INST_DIR &&
 php bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth;
 php bin/magento module:disable Magento_TwoFactorAuth;
 "
 
 # Recompile files
 print_green "Recompile Magento files"
-magento_exec bash -c "cd $MAGENTO_INST_DIR/project-community-edition && php bin/magento setup:di:compile"
-magento_exec bash -c "cd $MAGENTO_INST_DIR/project-community-edition && php bin/magento cache:clean"
+magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento setup:di:compile"
+magento_exec bash -c "cd $MAGENTO_INST_DIR && php bin/magento cache:clean"
