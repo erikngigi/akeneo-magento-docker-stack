@@ -88,7 +88,7 @@ services:
         hostname: elasticsearch
         container_name: elasticsearch
         ports:
-          - "9100:9200"
+          - "9200:9200"
         networks:
           - akeneo-magento-app-network
         volumes:
