@@ -16,10 +16,10 @@ akeneo_exec() {
 
 # Download and extract Akeneo archive directly inside the container
 print_green "Downloading Akeneo PIM"
-akeneo_exec bash -c "curl -sSL https://download.akeneo.com/pim-community-standard-v7.0-latest-icecat.tar.gz"
+akeneo_exec bash -c "curl -sSL https://download.akeneo.com/pim-community-standard-v7.0-latest-icecat.tar.gz -o /tmp/akeneo.tar.gz"
 
 print_green "Extract Akeneo PIM archive"
-akeneo_exec bash -c "tar -xzf pim-community-standard-v7.0-latest-icecat.tar.gz -C $AKENEO_INST_DIR --strip-components=1"
+akeneo_exec bash -c "tar -xzf /tmp/akeneo.tar.gz -C $AKENEO_INST_DIR --strip-components=1 && rm -rf /tmp/akeneo.tar.gz"
 
 # copy .env to .env.local
 # print_green "Creating Akeneo .env.local file..."
