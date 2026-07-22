@@ -13,17 +13,6 @@ ARG GROUP_ID=1001
 # Install required system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    libxml2-dev \
-    libxslt-dev \
-    libonig-dev \
-    libgd-dev \
-    libssl-dev \
-    libicu-dev \
-    libmagickwand-dev \
     git \
     unzip \
     curl \
@@ -33,29 +22,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install and enable third-party PHP extensions via PECL
-RUN pecl install imagick apcu \
-    && docker-php-ext-enable imagick apcu
+# Install official PHP Extension Installer helper
+COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Configure and install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install \
-        bcmath \
-        calendar \
-        exif \
-        gd \
-        gettext \
-        intl \
-        mbstring \
-        mysqli \
-        opcache \
-        pcntl \
-        pdo_mysql \
-        soap \
-        sockets \
-        xsl \
-        xml \
-        zip
+# Install all required PHP extensions automatically
+RUN install-php-extensions \
+    apcu \
+    bcmath \
+    calendar \
+    exif \
+    gd \
+    gettext \
+    imagick \
+    intl \
+    mbstring \
+    mysqli \
+    opcache \
+    pcntl \
+    pdo_mysql \
+    soap \
+    sockets \
+    xsl \
+    zip
 
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
