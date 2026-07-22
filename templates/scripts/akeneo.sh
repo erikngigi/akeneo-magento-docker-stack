@@ -11,7 +11,7 @@ source "$AKENEO_SCRIPT_DIR/colors.sh"
 
 # Define a reusable function for the Docker container
 akeneo_exec() {
-	docker exec -it akeneo-php-fpm "$@"
+  docker exec -it akeneo "$@"
 }
 
 # Download Akeneo installation files using composer
