@@ -40,6 +40,7 @@ services:
         tty: true
         volumes:
           - ./src/magento:/home/magento/magento2:cached
+          - ./templates/php/php/info.php:/home/akeneo/akeneo7/info.php
           - ./templates/php/php/magento/php.ini-development:/usr/local/etc/php/php.ini:ro
           - ./templates/php/php-fpm.d/magento/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
           - ./templates/php/php-fpm.d/magento/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
@@ -56,6 +57,7 @@ services:
         tty: true
         volumes:
           - ./src/akeneo:/home/akeneo/akeneo7:cached
+          - ./templates/php/php/info.php:/home/akeneo/akeneo7/info.php
           - ./templates/php/php/akeneo/php.ini-development:/usr/local/etc/php/php.ini:ro
           - ./templates/php/php-fpm.d/akeneo/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
           - ./templates/php/php-fpm.d/akeneo/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
