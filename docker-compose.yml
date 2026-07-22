@@ -89,6 +89,8 @@ services:
         container_name: elasticsearch
         ports:
           - "9200:9200"
+        environment:
+            ELASTIC_SEARCH_PASSWORD: ${ELASTIC_SEARCH_PASSWORD}
         networks:
           - akeneo-magento-app-network
         volumes:
