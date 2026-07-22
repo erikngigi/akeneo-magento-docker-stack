@@ -88,7 +88,7 @@ services:
         hostname: elasticsearch
         container_name: elasticsearch
         ports:
-          - "9200:9200"
+          - "9100:9200"
         environment:
             ELASTIC_SEARCH_PASSWORD: ${ELASTIC_SEARCH_PASSWORD}
         networks:
