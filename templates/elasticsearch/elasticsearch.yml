@@ -1,0 +1,16 @@
+# ------------------------------------ Cluster & Node ------------------------------------
+cluster.name: "dev-cluster"
+node.name: "dev-node-1"
+# ------------------------------------ Network -------------------------------------------
+# Bind to 0.0.0.0 so the container listens to external Docker requests
+network.host: 0.0.0.0
+http.port: 9200
+# Bypasses cluster voting logic for single-node development setup
+discovery.type: single-node
+# ------------------------------------ Security (X-Pack) ---------------------------------
+# 1. Enable Basic Password Authentication
+xpack.security.enabled: true
+# 2. Disable HTTP TLS for easier local testing (e.g. use http:// instead of https://)
+xpack.security.http.ssl.enabled: false
+# 3. Disable internal Transport TLS (not strictly needed for single-node dev)
+xpack.security.transport.ssl.enabled: false

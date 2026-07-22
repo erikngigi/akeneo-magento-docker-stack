@@ -88,13 +88,13 @@ services:
         hostname: elasticsearch
         container_name: elasticsearch
         ports:
-          - "9100:9100"
-        environment:
-          - discovery.type=single-node
-          - xpack.security.enabled=false
-          - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+          - "9100:9200"
         networks:
           - akeneo-magento-app-network
+        volumes:
+          - ./templates/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+          - ./templates/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options.d/jvm.options
+          - es-data:/usr/share/elasticsearch/data
         depends_on:
           - akeneo
           - magento
@@ -122,6 +122,9 @@ networks:
         name: akeneo-magento-app-network
         driver: bridge
 volumes:
+    es-data:
+        name: elasticsearch-data-volume
+        driver: local
     db-data:
         name: mysql-database-volume
         driver: local

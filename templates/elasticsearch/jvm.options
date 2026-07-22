@@ -1,0 +1,13 @@
+################################################################
+# JVM configuration for Local Development
+################################################################
+
+## Heap size settings (Min and Max MUST match)
+-Xms1g
+-Xmx1g
+
+## Garbage Collection & Performance (Dev tweaks)
+-XX:+UseG1GC
+
+## Disable severe heap dumps on crash to save host disk space
+-XX:-HeapDumpOnOutOfMemoryError
