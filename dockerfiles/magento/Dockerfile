@@ -31,6 +31,7 @@ RUN install-php-extensions \
     bcmath \
     calendar \
     exif \
+    ftp \
     gd \
     gettext \
     imagick \
