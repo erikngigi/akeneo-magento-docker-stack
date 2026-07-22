@@ -17,7 +17,7 @@ akeneo_exec() {
 # Download Akeneo installation files using composer
 print_green "Akeneo files were succesfully downloaded."
 akeneo_exec bash -c "sudo chown -R $AKENEO_USER:$AKENEO_USER $AKENEO_INST_DIR"
-akeneo_exec bash -c "composer create-project akeneo/pim-community-standard $AKENEO_INST_DIR '7.0.*@stable'"
+akeneo_exec bash -c "composer create-project akeneo/pim-community-standard $AKENEO_INST_DIR '7.0.*@stable' --no-audit --config=policy.advisories.block=false"
 
 # copy .env to .env.local
 print_green "Akeneo environmental file was created."
